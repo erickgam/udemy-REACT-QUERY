@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { fetchComments } from "./api";
 import "./PostDetail.css";
 
