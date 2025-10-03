@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { Treatment } from "@shared/types";
 
@@ -11,10 +11,18 @@ async function getTreatments(): Promise<Treatment[]> {
   return data;
 }
 
-export function useTreatments(): Treatment[] {  
+export function useTreatments(): Treatment[] {
   const { data = [] } = useQuery({
     queryKey: [queryKeys.treatments],
     queryFn: getTreatments,
   });
   return data;
+}
+
+export function usePrefrechTreatments(): void {
+  const queryClient = useQueryClient();
+  queryClient.prefetchQuery({
+    queryKey: [queryKeys.treatments],
+    queryFn: getTreatments,
+  });
 }
