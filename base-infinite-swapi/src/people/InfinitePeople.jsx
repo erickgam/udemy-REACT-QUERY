@@ -21,7 +21,7 @@ export function InfinitePeople() {
   } = useInfiniteQuery({
     queryKey: ["sw-people"],
     queryFn: ({ pageParam = initialUrl }) => fetchUrl(pageParam),
-    getNextPageParam: (lastPage) => lastPage.next ?? "undefined",
+    getNextPageParam: (lastPage) => lastPage.next ?? undefined,
   });
 
   if (isLoading) return <div className="loading">Loading...</div>;
