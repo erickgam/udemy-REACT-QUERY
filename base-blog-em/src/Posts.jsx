@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 const maxPostPage = 10;
 
 export function Posts() {
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
 
   const { data, isLoading, isError, error } = useQuery({

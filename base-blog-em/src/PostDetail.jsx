@@ -5,10 +5,11 @@ import "./PostDetail.css";
 export function PostDetail({ post }) {
   const { data, isLoading, isError, error } = useQuery({
     // queryKey: ["post", post.id, "comments"],
-    queryKey: ["comments"],
+    // queryKey: ["comments"],
+    queryKey: ["comments", post.id],
     // queryFn: fetchComments,
     queryFn: () => fetchComments(post.id),
-    staleTime: 2000, // 2 seconds
+    // staleTime: 2000, // 2 seconds
   });
 
   if (isLoading) {
