@@ -18,6 +18,7 @@ export function InfinitePeople() {
 
   return (
     <InfiniteScroll
+      initialLoad={false}
       loadMore={() => {
         if (!isFetching) fetchNextPage();
       }}
