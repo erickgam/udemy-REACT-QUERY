@@ -1,10 +1,6 @@
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AppointmentDateMap } from "../types";
 import { getAvailableAppointments } from "../utils";
@@ -19,6 +15,7 @@ type GetAppointmentsQueryResult = Pick<
   "queryKey"
 > & {
   queryFn: () => Promise<AppointmentDateMap>;
+  select?: (data: AppointmentDateMap) => AppointmentDateMap;
 };
 
 // for useQuery call
@@ -30,15 +27,15 @@ async function getAppointments(
   return data;
 }
 
-function getAppointmentsQuery(
+const getAppointmentsQuery = (
   year: MonthYear["year"],
-  month: MonthYear["month"]
-): GetAppointmentsQueryResult {
-  return {
-    queryKey: [queryKeys.appointments, year, month],
-    queryFn: () => getAppointments(year, month),
-  };
-}
+  month: MonthYear["month"],
+  select?: (data: AppointmentDateMap) => AppointmentDateMap
+): GetAppointmentsQueryResult => ({
+  queryKey: [queryKeys.appointments, year, month],
+  queryFn: () => getAppointments(year, month),
+  ...(select ? { select } : {}),
+});
 
 // The purpose of this hook:
 //   1. track the current month/year (aka monthYear) selected by the user
@@ -70,7 +67,16 @@ export function useAppointments() {
   // We will need imported function getAvailableAppointments here
   // We need the user to pass to getAvailableAppointments so we can show
   //   appointments that the logged-in user has reserved (in white)
-  // const { userId } = useLoginData();
+  const { userId } = useLoginData();
+
+  const selectFn = useCallback(
+    (data: AppointmentDateMap, showAll: boolean): AppointmentDateMap => {
+      if (showAll) return data;
+
+      return getAvailableAppointments(data, userId);
+    },
+    [userId]
+  );
 
   /** ****************** END 2: filter appointments  ******************** */
   /** ****************** START 3: useQuery  ***************************** */
@@ -93,7 +99,9 @@ export function useAppointments() {
   //       monthYear.month
   // const appointments: AppointmentDateMap = {};
   const { data: appointments = [] } = useQuery(
-    getAppointmentsQuery(monthYear.year, monthYear.month)
+    getAppointmentsQuery(monthYear.year, monthYear.month, (data) =>
+      selectFn(data, showAll)
+    )
   );
 
   /** ****************** END 3: useQuery  ******************************* */
