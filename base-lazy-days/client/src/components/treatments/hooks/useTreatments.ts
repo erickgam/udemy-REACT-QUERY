@@ -11,18 +11,17 @@ async function getTreatments(): Promise<Treatment[]> {
   return data;
 }
 
-export function useTreatments(): Treatment[] {
-  const { data = [] } = useQuery({
+const getTreatmentsQuery = {
     queryKey: [queryKeys.treatments],
     queryFn: getTreatments,
-  });
+  }
+
+export function useTreatments(): Treatment[] {
+  const { data = [] } = useQuery(getTreatmentsQuery);
   return data;
 }
 
 export function usePrefrechTreatments(): void {
   const queryClient = useQueryClient();
-  queryClient.prefetchQuery({
-    queryKey: [queryKeys.treatments],
-    queryFn: getTreatments,
-  });
+  queryClient.prefetchQuery(getTreatmentsQuery);
 }
