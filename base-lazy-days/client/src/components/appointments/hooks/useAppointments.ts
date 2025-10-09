@@ -1,4 +1,8 @@
-import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -9,7 +13,13 @@ import { getMonthYearDetails, getNewMonthYear, MonthYear } from "./monthYear";
 import { useLoginData } from "@/auth/AuthContext";
 import { axiosInstance } from "@/axiosInstance";
 import { queryKeys } from "@/react-query/constants";
-import { queryClient } from "@/react-query/queryClient";
+
+type GetAppointmentsQueryResult = Pick<
+  Parameters<typeof useQuery>[0],
+  "queryKey"
+> & {
+  queryFn: () => Promise<AppointmentDateMap>;
+};
 
 // for useQuery call
 async function getAppointments(
@@ -23,7 +33,7 @@ async function getAppointments(
 function getAppointmentsQuery(
   year: MonthYear["year"],
   month: MonthYear["month"]
-): Pick<Parameters<typeof useQuery>[0], "queryKey" | "queryFn"> {
+): GetAppointmentsQueryResult {
   return {
     queryKey: [queryKeys.appointments, year, month],
     queryFn: () => getAppointments(year, month),
@@ -84,7 +94,7 @@ export function useAppointments() {
   // const appointments: AppointmentDateMap = {};
   const { data: appointments = [] } = useQuery(
     getAppointmentsQuery(monthYear.year, monthYear.month)
-  ) as UseQueryResult<AppointmentDateMap>
+  );
 
   /** ****************** END 3: useQuery  ******************************* */
 
