@@ -63,10 +63,11 @@ export function useAppointments() {
   //    2. The getAppointments query function needs monthYear.year and
   //       monthYear.month
   // const appointments: AppointmentDateMap = {};
+  const { year, month } = monthYear;
   const { data: appointments = [] } = useQuery({
-    queryKey: [queryKeys.appointments],
-    queryFn: () => getAppointments(monthYear.year, monthYear.month)
-  }) 
+    queryKey: [queryKeys.appointments, year, month],
+    queryFn: () => getAppointments(year, month),
+  });
 
   /** ****************** END 3: useQuery  ******************************* */
 
