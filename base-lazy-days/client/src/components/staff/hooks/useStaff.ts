@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { Staff } from "@shared/types";
 
@@ -17,10 +17,17 @@ async function getStaff(): Promise<Staff[]> {
 export function useStaff() {
   // for filtering staff by treatment
   const [filter, setFilter] = useState("all");
+  
+  const selectStaff = useCallback((staff: Staff[]) => {
+    if(filter === "all") return staff
+    
+    return filterByTreatment(staff, filter)
+  }, [filter])
 
   const { data: staff = [] } = useQuery({
     queryKey: [queryKeys.staff],
     queryFn: getStaff,
+    select: selectStaff
   });
 
   return { staff, filter, setFilter };
