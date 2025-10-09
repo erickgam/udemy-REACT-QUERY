@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -84,7 +84,7 @@ export function useAppointments() {
   // const appointments: AppointmentDateMap = {};
   const { data: appointments = [] } = useQuery(
     getAppointmentsQuery(monthYear.year, monthYear.month)
-  );
+  ) as UseQueryResult<AppointmentDateMap>
 
   /** ****************** END 3: useQuery  ******************************* */
 
